@@ -73,6 +73,8 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\ControlSystem.cfg" />
+    <None Include="jsonExample\config.json" />
+    <None Include="SIMPL+\jsonFetch_v1.0.usp" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
   <PropertyGroup>
