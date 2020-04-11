@@ -1,0 +1,134 @@
+/*******************************************************************************************
+  SIMPL+ Module Information
+*******************************************************************************************/
+/*
+Dealer Name:
+System Name:
+System Number:
+Programmer:
+Comments:
+*/
+
+/*******************************************************************************************
+  Compiler Directives
+*******************************************************************************************/
+//#SYMBOL_NAME ""
+#CATEGORY "12" // System Control
+#PRINT_TO_TRACE
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+
+/*******************************************************************************************
+  Include Libraries
+*******************************************************************************************/
+// #CRESTRON_LIBRARY ""
+// #USER_LIBRARY ""
+
+#includepath "C:\Crestron\Simpl\usrSIMPL#\jsFetch\jsRecall\bin\Debug"
+#user_simplsharp_library "jsFetch"
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+DIGITAL_INPUT _SKIP_,InitilizeFileSystem, _SKIP_,AddRoom, RemoveRoom, RefreshList,_SKIP_,FetchName;
+STRING_INPUT searchName$[50], _SKIP_, AddRoomName$[50], AddDescription$[254], AddCommand$[150];
+
+DIGITAL_OUTPUT _SKIP_, Busy, _SKIP_;
+
+ANALOG_OUTPUT  ListLenght;
+
+STRING_OUTPUT  _SKIP_, _SKIP_, _SKIP_, _SKIP_,_SKIP_, _SKIP_, RoomName$, Description$, Command$;
+
+STRING_PARAMETER FilePath$[100];
+
+
+jsonReadWrite json;  
+
+integer roomListLenghtVar;
+
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+
+function showFechedRoom(string RoomName, string Description, string Command)
+{
+	RoomName$     = RoomName;
+	Description$  = Description;
+	Command$      = Command;
+}
+
+function getRoomCount()
+{
+	busy = 1;
+	roomListLenghtVar = json.GetNumberOfRooms();
+	ListLenght = roomListLenghtVar;
+	busy = 0;	 
+}
+
+/*******************************************************************************************
+Global Variables
+*******************************************************************************************/
+                                             
+
+/*******************************************************************************************
+  Event Handlers
+*******************************************************************************************/
+
+PUSH AddRoom
+{
+
+	if (AddRoomName$ != "" && AddDescription$ != "" &&  AddCommand$ != "")
+	{
+    	json.AddRoom(AddRoomName$, AddDescription$, AddCommand$);
+	}
+	else
+		trace("Adding Room failed");
+}
+
+RELEASE AddRoom
+{
+	getRoomCount();
+}
+
+PUSH RemoveRoom
+{
+	json.RemoveRoom();
+}
+
+RELEASE RemoveRoom
+{
+	getRoomCount();
+}
+
+PUSH RefreshList
+{
+	getRoomCount();
+}
+
+PUSH InitilizeFileSystem
+{
+	json.Initialize(FilePath$);
+}
+
+PUSH FetchName
+{
+	json.fetchRoomName(searchName$);
+}
+
+EventHandler SimplPlusEventHandler(jsonReadWrite sender, itemValue e)
+{
+	showFechedRoom(e.RoomName, e.Description, e.Command);
+	Trace("%u, %s, %s", e.Number, e.RoomName, e.Command);
+}
+
+Function Main()
+{
+
+	WaitForInitializationComplete();
+
+    Registerevent(json,returnItemValue,SimplPlusEventHandler);
+	roomListLenghtVar = 0;
+ 	json.Initialize(FilePath$);
+	getRoomCount();
+
+}
