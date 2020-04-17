@@ -139,7 +139,7 @@ namespace jsFetch
                 UpdateJSON();
             }
             else
-                ErrorLog.Error("No room for additional Contacts");
+                ErrorLog.Error("JSON file to large");
         }
 
 #endregion
@@ -156,7 +156,7 @@ namespace jsFetch
                 UpdateJSON();
             }
             else
-                CrestronConsole.PrintLine("[jsonReadWrite] Rooms list is empty. \r\n");
+                CrestronConsole.PrintLine("[jsonReadWrite] JSON file empty. \r\n");
         }
 #endregion
      
