@@ -13,17 +13,18 @@ namespace jsFetch
 
 #region Build json object
 
-    public class Configuration
+    public class Key
     {
         public ushort Number { get; set; }
         public string RoomName { get; set; }
         public string Description { get; set; }
         public string Command { get; set; }
+        public string Test { get; set; }
     }
 
     public class jsonObject
     {
-        public List<Configuration> Config { get; set; }
+        public List<Key> Config { get; set; }
     }
 
 #endregion
@@ -102,7 +103,7 @@ namespace jsFetch
 
             if (data.Config != null)
             {
-                foreach (Configuration item in data.Config)
+                foreach (Key item in data.Config)
                 {
                     value.Number = item.Number;
                     value.RoomName = item.RoomName;
@@ -128,7 +129,7 @@ namespace jsFetch
 
             if (count + 1 <= 150)
             {
-                data.Config.Add(new Configuration()
+                data.Config.Add(new Key()
                 {
                     Number = (ushort)(count + 1),
                     RoomName = _RoomName,
