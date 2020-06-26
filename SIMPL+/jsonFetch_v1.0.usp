@@ -1,15 +1,4 @@
 /*******************************************************************************************
-  SIMPL+ Module Information
-*******************************************************************************************/
-/*
-Dealer Name:
-System Name:
-System Number:
-Programmer:
-Comments:
-*/
-
-/*******************************************************************************************
   Compiler Directives
 *******************************************************************************************/
 //#SYMBOL_NAME ""
@@ -19,30 +8,25 @@ Comments:
 #ENABLE_STACK_CHECKING
 #ENABLE_TRACE
 
-/*******************************************************************************************
-  Include Libraries
-*******************************************************************************************/
-// #CRESTRON_LIBRARY ""
-// #USER_LIBRARY ""
 
 #includepath "C:\Crestron\Simpl\usrSIMPL#\jsFetch\jsRecall\bin\Debug"
 #user_simplsharp_library "jsFetch"
 /*******************************************************************************************
   DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
 *******************************************************************************************/
-DIGITAL_INPUT _SKIP_,InitilizeFileSystem, _SKIP_,AddRoom, RemoveRoom, RefreshList,_SKIP_,FetchName;
-STRING_INPUT searchName$[50], _SKIP_, AddRoomName$[50], AddDescription$[254], AddCommand$[150];
+DIGITAL_INPUT _SKIP_,InitilizeFileSystem, _SKIP_,AddName, RemoveName, RefreshList,_SKIP_,FetchName;
+STRING_INPUT searchName$[50], _SKIP_, AddName$[50], AddDescription$[254], AddCommand$[150];
 
 DIGITAL_OUTPUT _SKIP_, Busy, _SKIP_;
 
 ANALOG_OUTPUT  ListLenght;
 
-STRING_OUTPUT  _SKIP_, _SKIP_, _SKIP_, _SKIP_,_SKIP_, _SKIP_, RoomName$, Description$, Command$;
+STRING_OUTPUT  _SKIP_, _SKIP_, _SKIP_, _SKIP_,_SKIP_, _SKIP_, Name$, Description$, Command$;
 
 STRING_PARAMETER FilePath$[100];
 
 
-jsonReadWrite json;  
+jsonReadWrite json;
 
 integer roomListLenghtVar;
 
@@ -50,9 +34,9 @@ integer roomListLenghtVar;
   Functions
 *******************************************************************************************/
 
-function showFechedRoom(string RoomName, string Description, string Command)
+function showFechedRoom(string Name, string Description, string Command)
 {
-	RoomName$     = RoomName;
+	Name$     = 	Name;
 	Description$  = Description;
 	Command$      = Command;
 }
@@ -60,42 +44,38 @@ function showFechedRoom(string RoomName, string Description, string Command)
 function getRoomCount()
 {
 	busy = 1;
-	roomListLenghtVar = json.GetNumberOfRooms();
+	roomListLenghtVar = json.GetNumberOfNames();
 	ListLenght = roomListLenghtVar;
 	busy = 0;	 
 }
-
-/*******************************************************************************************
-Global Variables
-*******************************************************************************************/
-                                             
+                                       
 
 /*******************************************************************************************
   Event Handlers
 *******************************************************************************************/
 
-PUSH AddRoom
+PUSH AddName
 {
 
-	if (AddRoomName$ != "" && AddDescription$ != "" &&  AddCommand$ != "")
+	if (AddName$ != "" && AddDescription$ != "" &&  AddCommand$ != "")
 	{
-    	json.AddRoom(AddRoomName$, AddDescription$, AddCommand$);
+    	json.AddName(AddName$, AddDescription$, AddCommand$);
 	}
 	else
 		trace("Adding Room failed");
 }
 
-RELEASE AddRoom
+RELEASE AddName
 {
 	getRoomCount();
 }
 
-PUSH RemoveRoom
+PUSH RemoveName
 {
-	json.RemoveRoom();
+	json.RemoveName();
 }
 
-RELEASE RemoveRoom
+RELEASE RemoveName
 {
 	getRoomCount();
 }
@@ -112,19 +92,20 @@ PUSH InitilizeFileSystem
 
 PUSH FetchName
 {
-	json.fetchRoomName(searchName$);
+	json.fetchName(searchName$);
 }
 
 EventHandler SimplPlusEventHandler(jsonReadWrite sender, itemValue e)
 {
-	showFechedRoom(e.RoomName, e.Description, e.Command);
-	Trace("%u, %s, %s", e.Number, e.RoomName, e.Command);
+	showFechedRoom(e.Name, e.Description, e.Command);
+	//Trace("%u, %s, %s", e.Number, e.RoomName, e.Command);
 }
 
 Function Main()
 {
 
 	WaitForInitializationComplete();
+
 
     Registerevent(json,returnItemValue,SimplPlusEventHandler);
 	roomListLenghtVar = 0;

@@ -16,7 +16,7 @@ namespace jsFetch
     public class Key
     {
         public ushort Number { get; set; }
-        public string RoomName { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
         public string Command { get; set; }
         public string Test { get; set; }
@@ -24,8 +24,9 @@ namespace jsFetch
 
     public class jsonObject
     {
-        public List<Key> Config { get; set; }
+       public List<Key> Config { get; set; }
     }
+
 
 #endregion
 
@@ -34,7 +35,7 @@ namespace jsFetch
     public class itemValue : EventArgs
     {
         public ushort Number { get; set; }
-        public string RoomName { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
         public string Command { get; set; }
     }
@@ -44,7 +45,7 @@ namespace jsFetch
     {
         jsonObject data = new jsonObject();
         
-        string fileData = "{\"Config\":[{\"Number\":1,\"RoomName\":\"None\",\"Command\":\"None\",\"Description\":\"Please check file path.\"}]}"; //Put somthing in fileData for default output
+        string fileData = "{\"Config\":[{\"Number\":1,\"Name\":\"None\",\"Command\":\"None\",\"Description\":\"Please check file path.\"}]}"; //Put somthing in fileData for default output
         string filePath = "";
 
 #region Read json config file
@@ -86,7 +87,7 @@ namespace jsFetch
 
         }
 
-        public ushort GetNumberOfRooms()
+        public ushort GetNumberOfNames()
         {
             ushort number = (ushort)data.Config.Count;
             return number;
@@ -97,7 +98,7 @@ namespace jsFetch
 
         public event EventHandler<itemValue> returnItemValue;
 
-        public void fetchRoomName(string searchName)
+        public void fetchName(string searchName)
         {
             itemValue value = new itemValue();
 
@@ -106,10 +107,10 @@ namespace jsFetch
                 foreach (Key item in data.Config)
                 {
                     value.Number = item.Number;
-                    value.RoomName = item.RoomName;
+                    value.Name = item.Name;
                     value.Description = item.Description;
                     value.Command = item.Command;
-                    if (value.RoomName == searchName)
+                    if (value.Name == searchName)
                     {
                         if (returnItemValue != null)
                         {
@@ -121,18 +122,18 @@ namespace jsFetch
         }
 #endregion
 
-#region Add a room to json config file
+#region Add a name to json config file
 
-        public void AddRoom(string _RoomName, string _Command, string _Description)
+        public void AddName(string _Name, string _Command, string _Description)
         {
-            ushort count = GetNumberOfRooms();
+            ushort count = GetNumberOfNames();
 
             if (count + 1 <= 150)
             {
                 data.Config.Add(new Key()
                 {
                     Number = (ushort)(count + 1),
-                    RoomName = _RoomName,
+                    Name = _Name,
                     Description = _Description,
                     Command = _Command,
                 });
@@ -144,11 +145,11 @@ namespace jsFetch
 
 #endregion
 
-#region Remove a room from json config file
+#region Remove a name from json config file
 
-        public void RemoveRoom()
+        public void RemoveName()
         {
-            ushort count = GetNumberOfRooms();
+            ushort count = GetNumberOfNames();
 
             if (count - 1 >= 0)
             {
